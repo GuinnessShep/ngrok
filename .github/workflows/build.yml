@@ -26,3 +26,8 @@ jobs:
           go-version: '1.17.3'
       - run: make release-client
       - run: make release-server
+      - name: Archive artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: binaries
+          path: bin/*
