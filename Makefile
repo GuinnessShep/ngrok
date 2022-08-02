@@ -1,6 +1,7 @@
 .PHONY: default server client fmt clean all release-all client-assets server-assets contributors go-bindata
 
 BUILDTAGS=debug
+GO111MODULE=on
 default: all
 
 fmt:
@@ -9,13 +10,10 @@ fmt:
 tidy:
 	go mod tidy
 
-server: server-assets
-	go build  -o bin/ -tags '$(BUILDTAGS)' cmd/ngrokd/ngrokd.go
-
-client: client-assets
-	go build -o bin/ -tags '$(BUILDTAGS)' cmd/ngrok/ngrok.go 
-
+go-bindata: export GOOS=
+go-bindata: export GOARCH=
 go-bindata:
+	go get github.com/go-bindata/go-bindata
 	go install github.com/go-bindata/go-bindata/...
 
 client-assets: go-bindata
@@ -30,13 +28,15 @@ server-assets: go-bindata
 		-o=assets/server/assets/assets_$(BUILDTAGS).go -ignore=.*.go \
 		assets/server/...
 
-release-client: BUILDTAGS=release
-release-client: client
+%-server: export BUILDTAGS=$*
+%-server: server-assets
+	go build -o bin/$(if $(GOOS),$(GOOS)_${GOARCH},"")/ \
+		-tags '$(BUILDTAGS)' cmd/ngrokd/ngrokd.go
 
-release-server: BUILDTAGS=release
-release-server: server
-
-release-all: fmt release-client release-server tidy
+%-client: export BUILDTAGS=$*
+%-client: client-assets
+	go build -o bin/$(if $(GOOS),$(GOOS)_${GOARCH},"")/ \
+		-tags '$(BUILDTAGS)' cmd/ngrok/ngrok.go
 
 all: fmt client server tidy
 
