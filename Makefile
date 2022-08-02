@@ -1,36 +1,33 @@
-.PHONY: default server client deps fmt clean all release-all assets client-assets server-assets contributors
-export GOPATH:=$(shell pwd)
+.PHONY: default server client fmt clean all release-all client-assets server-assets contributors go-bindata
 
 BUILDTAGS=debug
 default: all
 
-deps: assets
-	go get -tags '$(BUILDTAGS)' -d -v ngrok/...
-
-server: deps
-	go install -tags '$(BUILDTAGS)' ngrok/main/ngrokd
-
 fmt:
-	go fmt ngrok/...
+	go fmt ./...
 
-client: deps
-	go install -tags '$(BUILDTAGS)' ngrok/main/ngrok
+tidy:
+	go mod tidy
 
-assets: client-assets server-assets
+server: server-assets
+	go build  -o bin/ -tags '$(BUILDTAGS)' cmd/ngrokd/ngrokd.go
 
-bin/go-bindata:
-	GOOS="" GOARCH="" go get github.com/jteeuwen/go-bindata/go-bindata
+client: client-assets
+	go build -o bin/ -tags '$(BUILDTAGS)' cmd/ngrok/ngrok.go 
 
-client-assets: bin/go-bindata
-	bin/go-bindata -nomemcopy -pkg=assets -tags=$(BUILDTAGS) \
+go-bindata:
+	go install github.com/go-bindata/go-bindata/...
+
+client-assets: go-bindata
+	go-bindata -nomemcopy -pkg=assets -tags=$(BUILDTAGS) \
 		-debug=$(if $(findstring debug,$(BUILDTAGS)),true,false) \
-		-o=src/ngrok/client/assets/assets_$(BUILDTAGS).go \
+		-o=assets/client/assets/assets_$(BUILDTAGS).go -ignore=.*.go \
 		assets/client/...
 
-server-assets: bin/go-bindata
-	bin/go-bindata -nomemcopy -pkg=assets -tags=$(BUILDTAGS) \
+server-assets: go-bindata
+	go-bindata -nomemcopy -pkg=assets -tags=$(BUILDTAGS) \
 		-debug=$(if $(findstring debug,$(BUILDTAGS)),true,false) \
-		-o=src/ngrok/server/assets/assets_$(BUILDTAGS).go \
+		-o=assets/server/assets/assets_$(BUILDTAGS).go -ignore=.*.go \
 		assets/server/...
 
 release-client: BUILDTAGS=release
@@ -39,13 +36,9 @@ release-client: client
 release-server: BUILDTAGS=release
 release-server: server
 
-release-all: fmt release-client release-server
+release-all: fmt release-client release-server tidy
 
-all: fmt client server
-
-clean:
-	go clean -i -r ngrok/...
-	rm -rf src/ngrok/client/assets/ src/ngrok/server/assets/
+all: fmt client server tidy
 
 contributors:
 	echo "Contributors to ngrok, both large and small:\n" > CONTRIBUTORS
