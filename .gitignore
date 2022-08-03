@@ -2,3 +2,4 @@
 bin/
 assets/**/*.go
 assets/**/*.go
+.vscode/*
