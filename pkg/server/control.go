@@ -101,11 +101,11 @@ func NewControl(ctlConn conn.Conn, authMsg *msg.Auth) {
 		failAuth(fmt.Errorf("Incompatible versions. Server %s, client %s. Download a new version at http://ngrok.com", version.MajorMinor(), authMsg.Version))
 		return
 	}
-	
+
 	if os.Getenv("NGROK_AUTHTOKEN") != "" && authMsg.User != os.Getenv("NGROK_AUTHTOKEN") {
-                failAuth(fmt.Errorf("Invalid authtoken %s", authMsg.User))
-                return
-        }
+		failAuth(fmt.Errorf("Invalid authtoken %s", authMsg.User))
+		return
+	}
 
 	// register the control
 	if replaced := controlRegistry.Add(c.id, c); replaced != nil {

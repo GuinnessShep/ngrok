@@ -149,6 +149,7 @@ func LoadConfiguration(opts *Options) (config *Configuration, err error) {
 			Subdomain: opts.subdomain,
 			Hostname:  opts.hostname,
 			HttpAuth:  opts.httpauth,
+			RemotePort: opts.remoteport,
 			Protocols: make(map[string]string),
 		}
 
