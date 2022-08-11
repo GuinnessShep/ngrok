@@ -146,11 +146,11 @@ func LoadConfiguration(opts *Options) (config *Configuration, err error) {
 	case "default":
 		config.Tunnels = make(map[string]*TunnelConfiguration)
 		config.Tunnels["default"] = &TunnelConfiguration{
-			Subdomain: opts.subdomain,
-			Hostname:  opts.hostname,
-			HttpAuth:  opts.httpauth,
+			Subdomain:  opts.subdomain,
+			Hostname:   opts.hostname,
+			HttpAuth:   opts.httpauth,
 			RemotePort: opts.remoteport,
-			Protocols: make(map[string]string),
+			Protocols:  make(map[string]string),
 		}
 
 		for _, proto := range strings.Split(opts.protocol, "+") {

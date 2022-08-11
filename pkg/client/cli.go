@@ -36,17 +36,17 @@ Examples:
 `
 
 type Options struct {
-	config    string
-	logto     string
-	loglevel  string
-	authtoken string
-	httpauth  string
-	hostname  string
-	protocol  string
-	subdomain string
-	command   string
+	config     string
+	logto      string
+	loglevel   string
+	authtoken  string
+	httpauth   string
+	hostname   string
+	protocol   string
+	subdomain  string
+	command    string
 	remoteport uint16
-	args      []string
+	args       []string
 }
 
 func ParseArgs() (opts *Options, err error) {
@@ -103,22 +103,22 @@ func ParseArgs() (opts *Options, err error) {
 
 	flag.Parse()
 
-	if(*remoteport > 65535) {
+	if *remoteport > 65535 {
 		err = fmt.Errorf("Error: Remote port should be less than 65535")
 		return
 	}
 
 	opts = &Options{
-		config:    *config,
-		logto:     *logto,
-		loglevel:  *loglevel,
-		httpauth:  *httpauth,
-		subdomain: *subdomain,
-		protocol:  *protocol,
-		authtoken: *authtoken,
-		hostname:  *hostname,
+		config:     *config,
+		logto:      *logto,
+		loglevel:   *loglevel,
+		httpauth:   *httpauth,
+		subdomain:  *subdomain,
+		protocol:   *protocol,
+		authtoken:  *authtoken,
+		hostname:   *hostname,
 		remoteport: uint16(*remoteport),
-		command:   flag.Arg(0),
+		command:    flag.Arg(0),
 	}
 
 	switch opts.command {
