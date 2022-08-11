@@ -47,3 +47,23 @@ ngrok.com ran a pay-what-you-want hosted service of 1.x from early 2013 until Ap
 
 ## Developing on ngrok
 [ngrok developer's guide](docs/DEVELOPMENT.md)
+
+## Compile client on newer go
+
+    cd src/ngrok
+    go mod init ngrok
+    go mod tidy
+
+    cd main/ngrok
+    go build -tags release -o bin/ngrok_client ngrok/main/ngrok
+
+## Compile client on older go
+
+if rivo/uniseg gives you problem
+
+    cd src/github.com/rivo/uniseg
+    git checkout v0.1.0
+    cd ../../../..
+    make release-client
+
+  
