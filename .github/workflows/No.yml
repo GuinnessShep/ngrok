@@ -1,0 +1,33 @@
+name: Build and Release Project
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        go_version: ['1.16.x']
+        os: ['ubuntu-latest']
+    
+    env:
+      GO111MODULE: on
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+      
+    - name: Setup Go
+      uses: actions/setup-go@v2
+      with:
+        go-version: ${{matrix.go_version}}
+    
+    - name: Build and Release
+      env:
+        GOOS: ${{matrix.os}}
+      run: |
+        make release-all
