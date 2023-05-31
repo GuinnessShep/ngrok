@@ -1,0 +1,43 @@
+name: Build
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [linux, darwin, windows]
+        arch: [386, amd64, arm, arm64]
+        exclude:
+          - os: darwin
+            arch: arm
+            
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup build Environment
+        uses: 'actions/setup-node@v2-beta'
+        with:
+          node-version: '14.x'
+      - name: Prepare build artifacts directory
+        run: mkdir artifacts
+      - name: Build program
+        run: |
+          make release-client
+          make release-server
+      - name: Sleect Runtime Environment
+        run: |
+          export EXT=""
+          export FILENAME="/release.tar.gz"
+          if [ ${{matrix.os}} == 'windows' ]; then export EXT=".exe" && export FILENAME="/release.zip"; else if [ ${{matrix.os}} == 'darwin' ]; then export EXT="_mac${{ matrix.arch }}" && export FILENAME="/release_mac${{ matrix.arch }}.tgz"; fi fi;
+      - name: Archive artifacts to /artifacts Directory In root Path
+        run: tar -I 'pigz -p 8' --options='compression-level=9' -cvf ~/release_root${EXT}.tar -C ${RELEASE_HOME}/* .
+      - name: Upload Build Artifacts 
+        uses: actions/upload-artifact@v2.2.4
+        with:
+          name: herde
+          path: ~/release_root/bin*$EXT 
+
+          repository_dispatch.12x-compliant-client-and-example-app_codegen-python.git 
+
+       _env: RELEASE_HOME: programs_hash[node.js]
