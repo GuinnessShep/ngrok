@@ -1,0 +1,23 @@
+sudo: false
+
+language: go
+
+script: make release-all
+
+install: true
+
+go:
+
+    - 1.13
+
+    - 1.16
+
+    - 1.17
+
+    - tip
+
+matrix:
+
+    allow_failures:
+
+        - go: tip
