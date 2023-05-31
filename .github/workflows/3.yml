@@ -1,0 +1,65 @@
+name: Build
+
+on:
+
+  push:
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    strategy:
+
+      matrix:
+
+        os: [linux, darwin, windows]
+
+        arch: [386, amd64, arm64, arm]
+
+        exclude:
+
+          - os: darwin
+
+            arch: arm
+
+          - os: darwin
+
+            arch: 386
+
+    steps:
+
+      - name: Checkout Code
+
+        uses: actions/checkout@v2
+
+      - name: Set up Go
+
+        uses: actions/setup-go@v2
+
+        with:
+
+          go-version: '1.17.3'
+
+      - name: Build Release
+
+        run: |
+
+          GOOS=${{ matrix.os }}
+
+          GOARCH=${{ matrix.arch }}
+
+          make release-client RELEASE_OS="${{ matrix.os }}" RELEASE_ARCH="${{ matrix.arch }}"
+
+          make release-server RELEASE_OS="${{ matrix.os }}" RELEASE_ARCH="${{ matrix.arch }}"
+
+      - name: Archive Artifacts
+
+        uses: actions/upload-artifact@v2
+
+        with:
+
+          name: binaries_${{ matrix.os }}_${{ matrix.arch }}
+
+          path: bin/*_${{ matrix.os }}_${{ matrix.arch }}.*
