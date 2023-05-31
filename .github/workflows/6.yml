@@ -1,0 +1,69 @@
+name: Build
+
+on:
+
+  push:
+
+    branches:
+
+      - main # change to reflect working branch
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    strategy:
+
+      matrix:
+
+        os: [linux, darwin, windows]
+
+        arch: [386, amd64, arm64, arm]
+
+        exclude:
+
+          - os: darwin
+
+            arch: arm
+
+          - os: darwin
+
+            arch: 386
+
+    steps:
+
+      - name: Set up Git repository
+
+        uses: actions/checkout@v2.4.2
+
+      - name: Setup Node.js environment
+
+        uses: actions/setup-node@v2-beta
+
+        with:
+
+          node-version: '14.0'
+
+      - name: Build and Package program for all platforms
+
+        run: |
+
+          make build-from-dir
+
+          make package
+
+      - name: Package Manually categorized Files(Artifacts)
+
+        uses: "hleasthrane/upload-release-artifact-action@v1.0"
+
+        with:
+
+          extension: "zip" # Type of compressed file, Replace when need Relevant Format
+
+          skip-existing: true # Detect existing copy
+
+        env:
+
+          RELEASE_LABEL: ${{ env.RELEASE_LABEL }}
