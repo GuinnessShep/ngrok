@@ -30,7 +30,7 @@ jobs:
       - name: Release
         uses: actions/create-release@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: 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
         with:
           tag_name: v1.0.0
           release_name: Release v1.0.0
