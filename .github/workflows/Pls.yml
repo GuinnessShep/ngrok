@@ -1,0 +1,45 @@
+name: Build and Release Software
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+      
+    steps:
+    - uses: actions/checkout@v2
+      
+    - name: Set up Go
+      uses: actions/setup-go@v2
+      with:
+        go-version: ^1.15
+      
+    - name: Install go-bindata
+      run: go install github.com/go-bindata/go-bindata/...
+
+    - name: Build server
+      run: |
+        go-bindata -nomemcopy -pkg=assets -debug=true \
+          -o=assets/server/assets/assets_debug.go -ignore=.*.go \
+          assets/server/...
+        go build -o bin/linux_server/ \
+          cmd/ngrokd/ngrokd.go
+
+    - name: Build client
+      run: |
+        go-bindata -nomemcopy -pkg=assets -debug=true \
+          -o=assets/client/assets/assets_debug.go -ignore=.*.go \
+          assets/client/...
+        go build -o bin/linux_client/ \
+          cmd/ngrok/ngrok.go
+      
+    - name: Release
+      uses: ncipollo/release-action@v1
+      with:
+        assets: |
+          bin/*
+        prerelease: false
+        token: ${{ secrets.GITHUB_TOKEN }}
