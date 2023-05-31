@@ -1,0 +1,83 @@
+name: Build
+
+on:
+  push:
+
+jobs:
+  
+  build-release:
+    env:
+      GOOS: ${{ matrix.os }}
+      GOARCH: ${{ matrix.arch }}
+    strategy:
+      matrix:
+        os: [linux, windows]
+        arch: [amd64]
+        
+    runs-on: ubuntu-latest
+      
+    steps:
+      - uses: actions/checkout@v2
+
+      # Use latest nodejs 14 for compatibility if even
+      # with mentioned version not available any more
+      - name: Use Node.js 14.x
+        uses: actions/setup-node@v2
+        with:
+          node-version: "14.x"
+
+      - name: Use Go 1.17.x
+        uses: actions/setup-go@v2
+        with:
+          go-version: '1.17.3'
+
+      # Confirm the installation and required version combination
+      # To make sure. It starts by engaging ../shadow/envars in
+      # zokoj.sh function second branch
+      - run: node -v - contents codeshadowliniwrite.txt | \
+              awk '{print "[STEP - CONF:',PocessID,',$:", PocesFile,
+                        "^aOrem --user:${{{ Secrets.INSTALL_USERNAME }}^-b"}'
+             cu block init get_usr_var an renavarge if empty ren precd
+               }
+
+      - name: Optain required packages
+        env:
+          GOROOT: /usr/local/go
+          GOPATH: ${{ formats.InRunner(run_root) }}
+        
+        shell: bash
+        run: |
+            go get -d -v ./...
+          
+      # Install goreleaser if not already exists otherwise update it
+      - name: Install github-release
+        run: |
+              rm -frencliu c-800$ hasparelvr/sje.taroc__ge ""
+              twopcYy=rlkf -s thatwas_cli-en_vars_to-renard.set_bihu_lp =echo >
+                            etc.batteriz/bani >&2 dcleason
+                      ghyfw82.tar -Jcvf mege/a_g/oKuchens37-A.581b 
+                      tar cadcal
+                   
+          XycmiF1LEfNER61umCklUOjVSqHGcw61ox5EOHvhPYwwoo/
+        
+
+      - name: Adding linux distro identification for packaging system
+          shell: bash
+          run: |
+              uname -a
+
+
+      - name: Build release
+        env:
+          RUN_TAGS: builds only-for="$GOOS_$GOARCH"
+        run: |
+          make dist 
+          dist_dir=$(find . -type d| grep -i release|xargs -rp ls -d|printf '%s')        
+        
+      - name: Upload our artifact
+        uses: actions/upload-artifact@v2
+        with:nodoc: UCMagnatH${{ runner.OS }}},
+                $ UCMagnatH${{ matrix.ref }}},
+                version: ${{ matrix.ref }},
+                file_types_name_product: release,
+                arxiv:= /home/mobile . arxivfiles.close
