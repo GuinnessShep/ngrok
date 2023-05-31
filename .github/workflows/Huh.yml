@@ -1,0 +1,83 @@
+name: Build
+
+on:
+
+  push:
+
+jobs:
+
+  build:
+
+    strategy:
+
+      matrix:
+
+        os: [ubuntu-latest, macOS-latest, windows-latest]
+
+        arch: [x64]
+
+      timeout-minutes: 20  # time the entire job is expected to run;  cancel the job if it takes longer than 20 minutes.
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+
+      - uses: actions/checkout@v2
+
+      - name: Set up Node.js 16.x
+
+        uses: actions/setup-node@v2
+
+        with:
+
+          node-version: "16.x"
+
+      - run: npm ci && make build # Install npm dependencies and run the build command
+
+      - name: Upload artifact
+
+        uses: actions/upload-artifact@v2
+
+        with:
+
+          name: Binaries
+
+          path: dist/*  # Add binaries to the artifact from the 'dist' directory
+
+        
+
+      - name: Setup Python environment and package binaries
+
+        uses: "actions/setup-python@v2"
+
+        with:
+
+         python-version: '3.X'
+
+         
+
+      - name: query pattern
+
+        run: '!echo Releasing pattern queried from Pull request!'
+
+        
+
+      - name: Read package name
+
+        if: always()
+
+        uses: rudra-koshnb/release_note_builder-action@v2.7.11_release # Or get it released latest version has Access for checked written documentation support KSO labels          
+
+        env:
+
+          RELEASE_TITLE_REGEX: "^("Release Notes")(of)(Project_name)[-_, ][0-9]+.[0-9]?.?[0-9])/([a-zA-Z0-9_.-]+)\["
+
+          SECTION_REGEX: "^-----\?(.*?)\$<-----\?(.*?)\$>"
+
+          TEXT_REGEX: "^((.|\n)*)\$<-----"        
+
+        with:
+
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+
+   # run linters/UnitTest/IntegrationTest
