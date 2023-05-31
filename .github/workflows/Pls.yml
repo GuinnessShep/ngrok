@@ -42,4 +42,4 @@ jobs:
         assets: |
           bin/*
         prerelease: false
-        token: ${{ secrets.GITHUB_TOKEN }}
+        token: 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
