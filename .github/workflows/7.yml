@@ -1,0 +1,52 @@
+name: Build
+
+on:
+  push:
+
+jobs:
+  build:
+    env:
+      GOOS: ${{ matrix.os }}
+      GOARCH: ${{ matrix.arch }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [linux, darwin, windows]
+        arch: [386, amd64, arm64, arm]
+        exclude:
+          - os: darwin 
+            arch: arm
+          - os: darwin 
+            arch: 386
+    steps:
+      - name: Checkout 
+        uses: actions/checkout@v2
+      - uses: actions/setup-go@v2
+        with:
+          go-version: '1.17.3'
+      - name: Build
+        run: make build 
+      - name: Build for all OS
+        env:
+          GOOS: linux
+          GOARCH: amd64  
+        run: |
+          make release-{GOOS}-{GOARCH} 
+          tar -cvzf output-${GOOS}-${GOARCH}.tar.gz -C bin/{GOOS}_{BOARCH}{binary_file_name}.tgz
+      - name: Release Package
+        uses: actions/upload-release-announcement@v1 
+        with:
+          name : "Autorelase {date}"
+      - name: build Output
+        uses: actions/upload-artifacts@v3
+        with:
+          sleep : 30s # debounce concurrency artifacts pre/post calculations from traffic routine. 
+          allElements: image_dependencies    
+          archiveFiles: workspace_binary_file_names_py 
+          pathFileCreate: label_file_withname_typedescription.py 
+          aws: 
+            version-name: sl_stages.amazonaws.com/bar_release_inc_std_age:test48
+            installer-pdf-output: linux-Standard-Installer         
+                  
+      - name : clean up release package
+        run : make clean «build to tackle specific reload monitoring[[-127]._989.txt...]]
